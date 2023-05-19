@@ -1,0 +1,100 @@
+{% extends "index.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <form class="" style="border: 2px solid #FFF; border-radius: 5px; padding: 20px; background-color: #f68b1e; color: #FFF" method="POST" action="">
+        {% csrf_token %}
+
+        <div class="mb-3" style="max-height: 140px;
+        overflow: auto;">
+        <label  class="form-label"> <strong>Marques</strong> </label>
+
+                {% for brand in brands %}
+                    <div class="form-check">
+                        {% if brand.brandName in selectedBrands %}
+                            <input style="cursor: pointer;" class="form-check-input" type="checkbox" checked value="{{brand.brandName}}"
+                                    id="{{brand}}" name="brands">
+                            <label style="cursor: pointer;" class="form-check-label" for="{{brand.brandName}}">
+                                <strong>{{brand.brandName}}</strong>
+                            </label>
+                        {% else %}
+                            <input style="cursor: pointer;" class="form-check-input" type="checkbox" value="{{brand.brandName}}"
+                                    id="{{brand}}" name="brands">
+                            <label style="cursor: pointer;" class="form-check-label" for="{{brand.brandName}}">
+                                <strong>{{brand.brandName}}</strong>
+                            </label>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label"> <strong>Prix Maximale En (TND)</strong> </label>
+            <input type="number" name="maximumPrice" class="form-control" value="{{priceValue}}" id="exampleFormControlInput1">
+        </div>
+        <button type="range" class="btn form-control" style="background-color: #FFF; font-weight: bold !important; font-size: 20px; color: #f68b1e" id="filter">Filter</button>
+    </form>
+
+    <div style="font-size: 20px; padding: 20px; justify-content: space-between; align-items: center; border-radius: 6px; background-color: #f68b1e; color: #FFF; border: 2px solid #FFF" class="d-flex mt-3" >
+        <div class="title">
+            <strong>Smartphones</strong>
+        </div>
+        <div class="result">
+            <strong>{{results}}</strong>
+        </div>
+    </div>
+    <div class="d-flex mt-3" style="flex-wrap: wrap; justify-content: space-between">
+        {% if smartphones %}
+            {% for smartphone in smartphones %}
+                <a href={{smartphone.productLink}} id="card" target="_blank" style="text-decoration: none;">
+                    <div class="card mb-3" style="width: 18rem; padding: 20px; height: 440px;">
+                        <div>
+                            <img src={{smartphone.productImage}}
+                                class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <p class="card-title" style="text-align: center;"> {{smartphone.productName}} </p>
+                                <strong class="card-text" style="position: absolute; bottom: 15px; left: 25%">
+                                    Prix : {{smartphone.productPrice}}
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-warning" role="alert" style="width: 100%">
+               <strong>
+                   Aucune donnée n'a été récupérée pour la ou les marques
+                   {% for brand in selectedBrands %}
+                    <i>
+                        <u>
+                            {{brand}} ,
+                        </u>
+                    </i>
+                   {% endfor %}
+                   dont le prix du smartphone est inférieur au prix maximum <i> <i> {{priceValue}} TND </i> </i> que vous avez saisi.
+               </strong>
+            </div>
+        {% endif %}
+    </div>
+            <ul class="pagination" style="border: 2px solid #FFF;background-color: #f68b1e;font-size: 20px; padding: 20px; display: flex; justofy-content: space-between; border-radius: 6px">
+                {% for i in pages %}
+                    {% if i == page %}
+                        <li class="page-item active" style="margin: 0 23px; text-align: center">
+                                <a class="page-link " href="#" style=" width: 44px; height: 44px; border-radius: 50% !important;  font-weight: bold">
+                                {{ i }}
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="page-item"  style="margin: 0 23px;  text-align: center;">
+                           <a class="page-link " href="{% url 'pagination' page=i %}"
+                           style="width: 44px; height: 44px; border-radius: 50% !important;  font-weight: bold">
+                                {{ i }}
+                            </a>
+                        </li>
+                    {% endif %}
+
+                {% endfor %}
+            </ul>
+    </div>
+{% endblock content %}
